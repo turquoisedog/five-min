@@ -1,0 +1,28 @@
+<p style="color: green"><%= notice %></p>
+
+<div class="container"
+     data-controller="gallery"
+     data-gallery-selected-class="selected"
+     data-gallery-selecting-class="selecting">
+  <h1>Gallery</h1>
+  <button class="btn btn-primary"
+          data-bs-toggle="button"
+          data-action="gallery#toggleSelectionMode">
+    Select
+  </button>
+  <button class="btn btn-secondary"
+          data-action="gallery#testGroups">
+    Add to test group
+  </button>
+  <div class="row g-2 align-items-center gallery" data-gallery-target="galleryContainer">
+    <% @photos.each do |photo| %>
+      <div class="col-auto">
+        <%= link_to photo, id: dom_id(photo), data: { 'action': 'gallery#select' } do %>
+          <%= image_tag photo.asset.variant(:thumb), class: 'rounded-3' %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%= link_to "New photo", new_photo_path %>

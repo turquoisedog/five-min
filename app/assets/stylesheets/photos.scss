@@ -1,0 +1,16 @@
+.gallery {
+  img {
+    transition: box-shadow 0.5s, opacity 0.5s;
+  }
+
+  &.selecting {
+    img {
+      opacity: 65%;
+
+      &.selected {
+        box-shadow: 0 0 0 3px blue;
+        opacity: 100%;
+      }
+    }
+  }
+}

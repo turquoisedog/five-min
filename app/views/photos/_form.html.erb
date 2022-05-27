@@ -1,0 +1,21 @@
+<%= form_with model: @photo do |form| %>
+  <% if photo.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(photo.errors.count, "error") %> prohibited this photo from being saved:</h2>
+
+      <ul>
+        <% photo.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.file_field :assets, multiple: true, direct_upload: true %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
