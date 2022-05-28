@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { put } from "@rails/request.js"
 
 // rubymine i love you but stimulus puts ruby magic into js it's nuts
 // noinspection JSDeprecatedSymbols,JSUnresolvedVariable
@@ -21,24 +22,32 @@ export default class extends Controller {
     }
   }
 
-  // runs any time an image link is clicked
-  // if in selection state, override the link and do some stuff
   select() {
     if (this.selectionModeValue) {
       event.preventDefault()
 
       if (!event.target.classList.contains(this.selectedClass)) {
         event.target.classList.add(this.selectedClass)
-        this.selectedPhotosValue = this.selectedPhotosValue.concat(event.currentTarget.id)
+        this.selectedPhotosValue = this.selectedPhotosValue.concat(
+            event.currentTarget.dataset.sgid
+        )
       } else {
         event.target.classList.remove(this.selectedClass)
-        this.selectedPhotosValue = this.selectedPhotosValue.filter(id => id !== event.currentTarget.id)
+        this.selectedPhotosValue = this.selectedPhotosValue.filter(
+            id => id !== event.currentTarget.dataset.sgid
+        )
       }
     }
   }
 
-  testGroups() {
-
+  async updateGroups() {
+    const response = await put('/photos', {
+      body: JSON.stringify({
+        selected_photos: this.selectedPhotosValue,
+        group_id: 3
+      }),
+      responseKind: "json"
+    })
   }
 
   deselectAll() {

@@ -11,13 +11,13 @@
     Select
   </button>
   <button class="btn btn-secondary"
-          data-action="gallery#testGroups">
+          data-action="gallery#updateGroups">
     Add to test group
   </button>
   <div class="row g-2 align-items-center gallery" data-gallery-target="galleryContainer">
     <% @photos.each do |photo| %>
       <div class="col-auto">
-        <%= link_to photo, id: dom_id(photo), data: { 'action': 'gallery#select' } do %>
+        <%= link_to photo, data: { action: 'gallery#select', sgid: photo.to_sgid_param } do %>
           <%= image_tag photo.asset.variant(:thumb), class: 'rounded-3' %>
         <% end %>
       </div>

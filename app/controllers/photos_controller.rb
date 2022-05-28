@@ -1,5 +1,5 @@
 class PhotosController < ApplicationController
-  before_action :set_photo, only: %i[ show edit update destroy ]
+  before_action :set_photo, only: %i[ show edit destroy ]
 
   # GET /photos or /photos.json
   def index
@@ -19,9 +19,11 @@ class PhotosController < ApplicationController
   def edit
   end
 
-  # POST /photos or /photos.json
   def create
     Photo.transaction do
+      # compact_blank! because for some godawful reason
+      # the form gets generated with a stray blank field.
+      # why
       photo_params[:assets].compact_blank!.each do |asset|
         Photo.create(asset: asset)
       end
@@ -30,16 +32,25 @@ class PhotosController < ApplicationController
     redirect_to photos_url
   end
 
-  # PATCH/PUT /photos/1 or /photos/1.json
+  # def update
+  #   respond_to do |format|
+  #     if @photo.update(photo_params)
+  #       format.html { redirect_to photo_url(@photo), notice: "Photo was successfully updated." }
+  #       format.json { render :show, status: :ok, location: @photo }
+  #     else
+  #       format.html { render :edit, status: :unprocessable_entity }
+  #       format.json { render json: @photo.errors, status: :unprocessable_entity }
+  #     end
+  #   end
+  # end
+
   def update
+    params[:selected_photos].each do |sgid|
+      puts GlobalID::Locator.locate_signed(sgid).id
+    end
+
     respond_to do |format|
-      if @photo.update(photo_params)
-        format.html { redirect_to photo_url(@photo), notice: "Photo was successfully updated." }
-        format.json { render :show, status: :ok, location: @photo }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @photo.errors, status: :unprocessable_entity }
-      end
+      format.json { head :ok }
     end
   end
 
