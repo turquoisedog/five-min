@@ -4,16 +4,29 @@
      data-controller="gallery"
      data-gallery-selected-class="selected"
      data-gallery-selecting-class="selecting">
-  <h1>Gallery</h1>
-  <button class="btn btn-primary"
-          data-bs-toggle="button"
-          data-action="gallery#toggleSelectionMode">
-    Select
-  </button>
-  <button class="btn btn-secondary"
-          data-action="gallery#updateGroups">
-    Add to test group
-  </button>
+
+  <div class="hstack">
+    <h2>All Photos</h2>
+    <button class="btn btn-outline-primary ms-auto rounded-pill"
+            data-bs-toggle="button"
+            data-action="gallery#toggleSelectionMode">
+      Select
+    </button>
+  </div>
+
+  <div class="input-group">
+    <%= select_tag 'group-selector',
+                   nil,
+                   class: 'form-select',
+                   placeholder: 'Select groups...',
+                   multiple: true,
+                   data: { gallery_target: 'groupSelector' } %>
+    <button class="btn btn-secondary"
+            data-action="gallery#updateGroups">
+      Add to test group
+    </button>
+  </div>
+
   <div class="row g-2 align-items-center gallery" data-gallery-target="galleryContainer">
     <% @photos.each do |photo| %>
       <div class="col-auto">
