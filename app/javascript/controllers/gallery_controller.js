@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import { put } from "@rails/request.js"
 import TomSelect from "tom-select"
+import { Photo } from "../photo"
 
 // noinspection JSDeprecatedSymbols,JSUnresolvedVariable
 export default class extends Controller {
@@ -66,32 +67,5 @@ export default class extends Controller {
     new TomSelect("#group-selector", {
       create: true
     })
-  }
-}
-
-class Photo {
-  constructor(domObject) {
-    this.domObject = domObject
-    this.innerImage = this.domObject.firstElementChild
-    this.sgid = domObject.dataset.sgid
-    this.selected = false
-  }
-
-  select() {
-    this.selected = true
-    this.innerImage.classList.add("selected")
-  }
-
-  deselect() {
-    this.selected = false
-    this.innerImage.classList.remove("selected")
-  }
-
-  static deselectAll(photos) {
-    photos.forEach(function(photo) {
-      photo.deselect()
-    })
-
-    photos.length = 0
   }
 }
