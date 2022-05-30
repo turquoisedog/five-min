@@ -9,54 +9,63 @@ export default class extends Controller {
 
   connect() {
     this.selecting = false
-    this.selectedPhotos = []
+    this.photos = []
+    this.anchor = null
 
     Array.from(
         document.getElementsByClassName("photo")
     ).forEach(domObject => {
-      this.selectedPhotos.push(new Photo(domObject))
+      this.photos.push(new Photo(domObject))
     }, this)
   }
 
   toggleSelecting() {
     if (this.selecting) {
-      this.selecting = false
-
       this.galleryTarget.classList.remove("selecting")
-      Photo.deselectAll(this.selectedPhotos)
+
+      Photo.deselectAll(this.photos)
 
       this.togglerTarget.classList.remove("btn-secondary")
       this.togglerTarget.classList.add("btn-outline-primary")
       this.togglerTarget.innerHTML = "Select"
-    } else {
-      this.selecting = true
 
+      this.anchor = null
+    } else {
       this.galleryTarget.classList.add("selecting")
 
       this.togglerTarget.classList.remove("btn-outline-primary")
       this.togglerTarget.classList.add("btn-secondary")
       this.togglerTarget.innerHTML = "Cancel"
     }
+
+    this.selecting = !this.selecting
   }
 
   toggleSelect() {
-    let photo = this.selectedPhotos.find( ({ sgid }) => sgid === event.currentTarget.dataset.sgid )
+    let photo = this.photos.find( ({ sgid }) => sgid === event.currentTarget.dataset.sgid )
 
     if (this.selecting) {
       event.preventDefault()
 
-      if (!photo.selected) {
-        photo.select()
-      } else {
-        photo.deselect()
+      if (!this.anchor) {
+        this.anchor = photo
+      } else if (event.shiftKey) {
+        let first = this.photos.indexOf(photo)
+        let last = this.photos.indexOf(this.anchor)
+
+        this.photos.slice(Math.min(first, last), Math.max(first, last)).forEach(photo => {
+          photo.select()
+        })
       }
+
+      photo.toggle()
     }
   }
 
   async updateGroups() {
     const response = await put("/photos", {
       body: JSON.stringify({
-        selected_photos: this.selectedPhotosValue,
+        selected_photos: Photo.getSelected(this.photos),
         group_id: 3
       }),
       responseKind: "json"

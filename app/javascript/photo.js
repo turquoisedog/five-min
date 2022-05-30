@@ -6,6 +6,14 @@ export class Photo {
         this.selected = false
     }
 
+    toggle() {
+        if (this.selected) {
+            this.deselect()
+        } else {
+            this.select()
+        }
+    }
+
     select() {
         this.selected = true
         this.innerImage.classList.add("selected")
@@ -20,7 +28,9 @@ export class Photo {
         photos.forEach(function(photo) {
             photo.deselect()
         })
+    }
 
-        photos.length = 0
+    static getSelected(photos) {
+        return photos.filter(photo => photo.selected).map(photo => { return photo.sgid })
     }
 }
