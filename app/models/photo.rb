@@ -7,7 +7,7 @@ class Photo < ApplicationRecord
 
   has_one_attached :asset do |asset|
     asset.variant :large, resize_to_limit: [1000, 1000], format: :jpeg, saver: { quality: 90 }
-    asset.variant :thumb, resize_to_fill: [200, 200, crop: :centre], format: :png
+    asset.variant :thumb, resize_to_fill: [400, 400, crop: :centre], format: :png
   end
 
   #noinspection RubyResolve

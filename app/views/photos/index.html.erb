@@ -1,15 +1,12 @@
 <p style="color: green"><%= notice %></p>
 
-<div class="container"
-     data-controller="gallery"
-     data-gallery-selected-class="selected"
-     data-gallery-selecting-class="selecting">
-
+<div class="container" data-controller="gallery">
   <div class="hstack">
     <h2>All Photos</h2>
     <button class="btn btn-outline-primary ms-auto rounded-pill"
             data-bs-toggle="button"
-            data-action="gallery#toggleSelectionMode">
+            data-action="gallery#toggleSelecting"
+            data-gallery-target="toggler">
       Select
     </button>
   </div>
@@ -27,11 +24,11 @@
     </button>
   </div>
 
-  <div class="row g-2 align-items-center gallery" data-gallery-target="galleryContainer">
+  <div class="row g-2 gallery" data-gallery-target="gallery">
     <% @photos.each do |photo| %>
-      <div class="col-auto">
-        <%= link_to photo, data: { action: 'gallery#select', sgid: photo.to_sgid_param } do %>
-          <%= image_tag photo.asset.variant(:thumb), class: 'rounded-3' %>
+      <div class="col-6 col-sm-4 col-md-2">
+        <%= link_to photo, class: 'photo', data: { action: 'gallery#toggleSelect', sgid: photo.to_sgid_param } do %>
+          <%= image_tag photo.asset.variant(:thumb), class: 'rounded' %>
         <% end %>
       </div>
     <% end %>

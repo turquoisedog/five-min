@@ -2,53 +2,52 @@ import { Controller } from "@hotwired/stimulus"
 import { put } from "@rails/request.js"
 import TomSelect from "tom-select"
 
-// rubymine i love you but stimulus puts ruby magic into js it's nuts
 // noinspection JSDeprecatedSymbols,JSUnresolvedVariable
 export default class extends Controller {
-  static values = {
-    selectionMode: Boolean,
-    selectedPhotos: Array
+  static targets = [ "toggler", "gallery", "groupSelector" ]
+
+  connect() {
+    this.selecting = false
+    this.selectedPhotos = []
+
+    Array.from(
+        document.getElementsByClassName("photo")
+    ).forEach(domObject => {
+      this.selectedPhotos.push(new Photo(domObject))
+    }, this)
   }
-  static targets = [ "galleryContainer", "groupSelector" ]
-  static classes = [ "selecting", "selected" ]
 
-  toggleSelectionMode() {
-    if (this.selectionModeValue) {
-      this.selectionModeValue = false
+  toggleSelecting() {
+    if (this.selecting) {
+      this.selecting = false
 
-      this.galleryContainerTarget.classList.remove(this.selectingClass)
-      this.deselectAll()
+      this.galleryTarget.classList.remove("selecting")
+      Photo.deselectAll(this.selectedPhotos)
 
-      event.currentTarget.classList.remove("btn-secondary")
-      event.currentTarget.classList.add("btn-outline-primary")
-      event.currentTarget.innerHTML = "Select"
+      this.togglerTarget.classList.remove("btn-secondary")
+      this.togglerTarget.classList.add("btn-outline-primary")
+      this.togglerTarget.innerHTML = "Select"
     } else {
-      this.selectionModeValue = true
+      this.selecting = true
 
-      this.galleryContainerTarget.classList.add(this.selectingClass)
+      this.galleryTarget.classList.add("selecting")
 
-      event.currentTarget.classList.remove("btn-outline-primary")
-      event.currentTarget.classList.add("btn-secondary")
-      event.currentTarget.innerHTML = "Cancel"
+      this.togglerTarget.classList.remove("btn-outline-primary")
+      this.togglerTarget.classList.add("btn-secondary")
+      this.togglerTarget.innerHTML = "Cancel"
     }
   }
 
-  select() {
-    if (this.selectionModeValue) {
+  toggleSelect() {
+    let photo = this.selectedPhotos.find( ({ sgid }) => sgid === event.currentTarget.dataset.sgid )
+
+    if (this.selecting) {
       event.preventDefault()
 
-      if (!event.target.classList.contains(this.selectedClass)) {
-        event.target.classList.add(this.selectedClass)
-
-        // add the selected photo's GlobalID to the array
-        this.selectedPhotosValue = this.selectedPhotosValue.concat(
-            event.currentTarget.dataset.sgid
-        )
+      if (!photo.selected) {
+        photo.select()
       } else {
-        event.target.classList.remove(this.selectedClass)
-        this.selectedPhotosValue = this.selectedPhotosValue.filter(
-            id => id !== event.currentTarget.dataset.sgid
-        )
+        photo.deselect()
       }
     }
   }
@@ -63,19 +62,36 @@ export default class extends Controller {
     })
   }
 
-  deselectAll() {
-    let classProxy = this.selectedClass; // ugh scopes
-
-    [...document.getElementsByClassName(this.selectedClass)].forEach(function(photo) {
-      photo.classList.remove(classProxy)
-    })
-
-    this.selectedPhotosValue = []
-  }
-
   groupSelectorTargetConnected(target) {
     new TomSelect("#group-selector", {
       create: true
     })
+  }
+}
+
+class Photo {
+  constructor(domObject) {
+    this.domObject = domObject
+    this.innerImage = this.domObject.firstElementChild
+    this.sgid = domObject.dataset.sgid
+    this.selected = false
+  }
+
+  select() {
+    this.selected = true
+    this.innerImage.classList.add("selected")
+  }
+
+  deselect() {
+    this.selected = false
+    this.innerImage.classList.remove("selected")
+  }
+
+  static deselectAll(photos) {
+    photos.forEach(function(photo) {
+      photo.deselect()
+    })
+
+    photos.length = 0
   }
 }
