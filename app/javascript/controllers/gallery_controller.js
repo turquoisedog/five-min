@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { put } from "@rails/request.js"
+import { post, put } from "@rails/request.js"
 import TomSelect from "tom-select"
 import { Photo } from "../photo"
 
@@ -63,18 +63,48 @@ export default class extends Controller {
   }
 
   async updateGroups() {
-    const response = await put("/photos", {
+    let selectedPhotos = Photo.getSelected(this.photos)
+    let selectedGroups = [...this.groupSelectorTarget.options]
+        .filter(option => option.selected)
+        .map(option => option.value)
+
+    await put("/photos", {
       body: JSON.stringify({
-        selected_photos: Photo.getSelected(this.photos),
-        group_id: 3
+        selected_photos: selectedPhotos,
+        selected_groups: selectedGroups
       }),
       responseKind: "json"
+    }).then(response => {
+      if (response.ok) {
+        this.showSuccessToast()
+        this.toggleSelecting()
+        this.groupSelector.clear()
+      }
     })
   }
 
   groupSelectorTargetConnected(target) {
-    new TomSelect("#group-selector", {
-      create: true
+    this.groupSelector = new TomSelect(target, {
+      create: async (input, callback) => {
+        await post("/groups", {
+          body: JSON.stringify({
+            name: input
+          }),
+          responseKind: "json"
+        }).then(response => response.json).then(body => {
+          return callback({ value: body.sgid, text: body.name })
+        })
+      }
     })
+  }
+
+  showSuccessToast() {
+    let toastContainer = document.querySelector("#toastContainer")
+    let toastEl = document.querySelector("#successToast")
+        .content.firstElementChild.cloneNode(true)
+    let toast = new bootstrap.Toast(toastEl)
+
+    toastContainer.appendChild(toastEl)
+    toast.show()
   }
 }

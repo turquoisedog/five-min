@@ -4,6 +4,7 @@ class PhotosController < ApplicationController
   # GET /photos or /photos.json
   def index
     @photos = Photo.all
+    @groups = Group.all
   end
 
   # GET /photos/1 or /photos/1.json
@@ -32,22 +33,15 @@ class PhotosController < ApplicationController
     redirect_to photos_url
   end
 
-  # def update
-  #   respond_to do |format|
-  #     if @photo.update(photo_params)
-  #       format.html { redirect_to photo_url(@photo), notice: "Photo was successfully updated." }
-  #       format.json { render :show, status: :ok, location: @photo }
-  #     else
-  #       format.html { render :edit, status: :unprocessable_entity }
-  #       format.json { render json: @photo.errors, status: :unprocessable_entity }
-  #     end
-  #   end
-  # end
-
   def update
-    params[:selected_photos].each do |sgid|
-      puts GlobalID::Locator.locate_signed(sgid).id
-    end
+    selected_photos = GlobalID::Locator.locate_many_signed params[:selected_photos]
+    selected_groups = GlobalID::Locator.locate_many_signed params[:selected_groups]
+
+    new_relations = selected_photos.pluck(:id)
+                                   .product(selected_groups.pluck(:id))
+                                   .map { |p, g| { photo_id: p, group_id: g } }
+
+    GroupPhoto.insert_all new_relations
 
     respond_to do |format|
       format.json { head :ok }

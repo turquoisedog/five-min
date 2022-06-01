@@ -13,14 +13,15 @@
 
   <div class="input-group mb-2">
     <%= select_tag 'group-selector',
-                   nil,
+                   options_from_collection_for_select(@groups, 'to_sgid', 'name'),
                    class: 'form-select',
                    placeholder: 'Select groups...',
                    multiple: true,
+                   autocomplete: 'off',
                    data: { gallery_target: 'groupSelector' } %>
     <button class="btn btn-secondary"
             data-action="gallery#updateGroups">
-      Add to test group
+      Add to group(s)
     </button>
   </div>
 
