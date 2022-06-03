@@ -2,15 +2,20 @@ import { Controller } from "@hotwired/stimulus"
 import { post, put } from "@rails/request.js"
 import TomSelect from "tom-select"
 import { Photo } from "../photo"
+import pluralize from "pluralize"
 
 // noinspection JSDeprecatedSymbols,JSUnresolvedVariable
 export default class extends Controller {
-  static targets = [ "toggler", "gallery", "groupSelector" ]
+  static targets = [ "toggler", "gallery", "groupSelector", "groupButton" ]
 
   connect() {
     this.selecting = false
     this.photos = []
     this.anchor = null
+
+    document.addEventListener("selectionToggled", event => {
+      this.groupButtonTarget.disabled = Photo.getSelected(this.photos).length <= 0;
+    })
 
     Array.from(
         document.getElementsByClassName("photo")
@@ -39,6 +44,7 @@ export default class extends Controller {
     }
 
     this.selecting = !this.selecting
+    this.selectionToggled()
   }
 
   toggleSelect() {
@@ -59,7 +65,12 @@ export default class extends Controller {
       }
 
       photo.toggle()
+      this.selectionToggled()
     }
+  }
+
+  selectionToggled() {
+    this.groupButtonTarget.disabled = Photo.getSelected(this.photos).length <= 0;
   }
 
   async updateGroups() {
@@ -74,12 +85,16 @@ export default class extends Controller {
         selected_groups: selectedGroups
       }),
       responseKind: "json"
-    }).then(response => {
-      if (response.ok) {
-        this.showSuccessToast()
-        this.toggleSelecting()
-        this.groupSelector.clear()
-      }
+    }).then(response => response.json).then(body => {
+      let photos = pluralize("photo", body.photos_updated, true)
+      let groups = pluralize("group", body.photos_updated, true)
+
+      this.showToast(
+          "text-bg-success",
+          `Added ${photos} to ${groups}.`
+      )
+      this.toggleSelecting()
+      this.groupSelector.clear()
     })
   }
 
@@ -98,11 +113,14 @@ export default class extends Controller {
     })
   }
 
-  showSuccessToast() {
+  showToast(className, text) {
     let toastContainer = document.querySelector("#toastContainer")
-    let toastEl = document.querySelector("#successToast")
+    let toastEl = document.querySelector("#toastTemplate")
         .content.firstElementChild.cloneNode(true)
     let toast = new bootstrap.Toast(toastEl)
+
+    toastEl.classList.add(className)
+    toastEl.querySelector(".toast-body").innerHTML = text
 
     toastContainer.appendChild(toastEl)
     toast.show()

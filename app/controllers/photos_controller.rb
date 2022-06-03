@@ -7,6 +7,19 @@ class PhotosController < ApplicationController
     @groups = Group.all
   end
 
+  def organize
+    @groups = Group.all
+    @photos = Photo.all
+
+    if params[:filter_group] == 'ungrouped'
+      @filtered_group = Group.new(name: 'Ungrouped')
+      @photos = Photo.where.missing(:groups)
+    elsif params[:filter_group] and params[:filter_group].match? /\A\d+\z/
+      @filtered_group = Group.find(params[:filter_group])
+      @photos = @filtered_group.photos.uniq
+    end
+  end
+
   # GET /photos/1 or /photos/1.json
   def show
   end
@@ -44,7 +57,10 @@ class PhotosController < ApplicationController
     GroupPhoto.insert_all new_relations
 
     respond_to do |format|
-      format.json { head :ok }
+      format.json { render json: {
+        photos_updated: selected_photos.count,
+        groups_updated: selected_groups.count
+      }, status: :ok }
     end
   end
 

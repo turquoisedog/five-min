@@ -6,27 +6,29 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "photos", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application", "navbar", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag params[:controller] %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   </head>
 
-  <body>
-    <template id="successToast">
-      <div class="toast align-items-center text-bg-success border-0"
-           role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-          <div class="toast-body">
-            Done!
+  <body class="vh-100">
+    <%= render 'partials/navbar' %>
+
+    <div class="container mt-3 h-100">
+      <%= yield %>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer">
+      <template id="toastTemplate">
+        <div class="toast align-items-center border-0"
+             role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                    data-bs-dismiss="toast" aria-label="Close"></button>
           </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto"
-                  data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-      </div>
-    </template>
-
-    <%= yield %>
-
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+      </template>
+    </div>
   </body>
 </html>

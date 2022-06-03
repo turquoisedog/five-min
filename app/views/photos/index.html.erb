@@ -1,38 +1,67 @@
 <p style="color: green"><%= notice %></p>
 
-<div class="container" data-controller="gallery">
+<div data-controller="gallery">
   <div class="hstack">
-    <h2>All Photos</h2>
-    <button class="btn btn-outline-primary ms-auto rounded-pill"
-            data-bs-toggle="button"
-            data-action="gallery#toggleSelecting"
-            data-gallery-target="toggler">
-      Select
-    </button>
+    <h2 class="me-auto mb-0">All Photos</h2>
+
+    <div class="hstack ms-auto">
+      <div class="btn-group" role="group" aria-label="Grouping actions">
+        <button class="btn btn-outline-primary"
+                data-bs-toggle="button"
+                data-action="gallery#toggleSelecting"
+                data-gallery-target="toggler">
+          Select
+        </button>
+        <button class="btn btn-outline-secondary"
+                data-bs-toggle="button"
+                data-action="gallery#toggleSelecting"
+                data-gallery-target="finalizeButton"
+                disabled>
+          Group...
+        </button>
+      </div>
+      <%= select_tag 'group-selector',
+                     options_from_collection_for_select(@groups, 'to_sgid', 'name'),
+                     class: 'form-select ms-2',
+                     placeholder: 'Select groups...',
+                     multiple: true,
+                     autocomplete: 'off',
+                     data: { gallery_target: 'groupSelector' } %>
+    </div>
   </div>
 
   <div class="input-group mb-2">
-    <%= select_tag 'group-selector',
-                   options_from_collection_for_select(@groups, 'to_sgid', 'name'),
-                   class: 'form-select',
-                   placeholder: 'Select groups...',
-                   multiple: true,
-                   autocomplete: 'off',
-                   data: { gallery_target: 'groupSelector' } %>
     <button class="btn btn-secondary"
             data-action="gallery#updateGroups">
       Add to group(s)
     </button>
   </div>
 
-  <div class="row g-2 gallery" data-gallery-target="gallery">
-    <% @photos.each do |photo| %>
-      <div class="col-6 col-sm-4 col-md-2">
-        <%= link_to photo, class: 'photo', data: { action: 'gallery#toggleSelect', sgid: photo.to_sgid_param } do %>
-          <%= image_tag photo.asset.variant(:thumb), class: 'rounded' %>
+  <div class="row">
+    <div class="col-lg-2">
+      <div class="card text-bg-light h-100">
+        <div class="card-header">
+          Filters
+        </div>
+        <div class="card-body">
+          <% @groups.each do |group| %>
+            <%= link_to  %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="row g-2 gallery" data-gallery-target="gallery">
+        <% @photos.each do |photo| %>
+          <div class="col-6 col-sm-4 col-md-2">
+            <%= link_to photo, class: 'photo', data: { action: 'gallery#toggleSelect', sgid: photo.to_sgid_param } do %>
+              <%= image_tag photo.asset.variant(:thumb), class: 'rounded' %>
+            <% end %>
+          </div>
         <% end %>
       </div>
-    <% end %>
+    </div>
+
   </div>
 </div>
 

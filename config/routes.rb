@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
   resources :groups
-  resources :photos
-  resource :photos, only: [:update]
+  resources :photos do
+    collection do
+      get 'organize'
+    end
+  end
 
   root "photos#index"
 end

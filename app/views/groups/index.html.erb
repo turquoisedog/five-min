@@ -1,14 +1,19 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>Groups</h1>
+<h1>Albums</h1>
 
-<div id="groups">
+<div class="row g-2">
   <% @groups.each do |group| %>
-    <%= render group %>
-    <p>
-      <%= link_to "Show this group", group %>
-    </p>
+    <div class="col-6 col-sm-4 col-md-2">
+      <div class="card border-0 bg-dark">
+        <%= link_to group, class: 'photo' do %>
+          <%= image_tag group.photos.first.asset.variant(:thumb), class: 'card-img' %>
+
+          <div class="card-img-overlay bg-dark bg-gradient bg-opacity-25 text-white d-flex flex-column">
+            <h5 class="card-title mt-auto mb-0"><%= group.name %></h5>
+          </div>
+        <% end %>
+      </div>
+    </div>
   <% end %>
 </div>
-
-<%= link_to "New group", new_group_path %>
