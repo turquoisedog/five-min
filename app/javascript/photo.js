@@ -25,8 +25,14 @@ export class Photo {
     }
 
     static deselectAll(photos) {
-        photos.forEach(function(photo) {
+        photos.forEach(photo => {
             photo.deselect()
+        })
+    }
+
+    static selectAll(photos) {
+        photos.forEach(photo => {
+            photo.select()
         })
     }
 

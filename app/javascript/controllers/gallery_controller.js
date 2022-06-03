@@ -3,6 +3,7 @@ import { post, put } from "@rails/request.js"
 import TomSelect from "tom-select"
 import { Photo } from "../photo"
 import pluralize from "pluralize"
+import hotkeys from "hotkeys-js"
 
 // noinspection JSDeprecatedSymbols,JSUnresolvedVariable
 export default class extends Controller {
@@ -22,6 +23,8 @@ export default class extends Controller {
     ).forEach(domObject => {
       this.photos.push(new Photo(domObject))
     }, this)
+
+    this.registerHotkeys()
   }
 
   toggleSelecting() {
@@ -55,7 +58,7 @@ export default class extends Controller {
 
       if (!this.anchor) {
         this.anchor = photo
-      } else if (event.shiftKey) {
+      } else if (hotkeys.shift) {
         let first = this.photos.indexOf(photo)
         let last = this.photos.indexOf(this.anchor)
 
@@ -124,5 +127,29 @@ export default class extends Controller {
 
     toastContainer.appendChild(toastEl)
     toast.show()
+  }
+
+  registerHotkeys() {
+    hotkeys("ctrl+a, command+a, ctrl+d, command+d, s", (event, handler) => {
+      if (handler.key === "s") {
+        this.toggleSelecting()
+      }
+
+      if (this.selecting) {
+        switch (handler.key) {
+          case "ctrl+a":
+          case "command+a":
+            Photo.selectAll(this.photos)
+            break
+          case "ctrl+d":
+          case "command+d":
+            Photo.deselectAll(this.photos)
+            break
+        }
+
+        this.selectionToggled()
+        return false
+      }
+    })
   }
 }
