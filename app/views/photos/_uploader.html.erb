@@ -1,0 +1,11 @@
+<div class="d-grid mb-3" data-controller="photo-manager--upload">
+  <button type="button"
+          class="btn btn-outline-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#uploadModal">
+    <i class="bi bi-upload me-2"></i>
+    Upload Photos
+  </button>
+</div>
+
+<%= render 'form', photo: @photo %>

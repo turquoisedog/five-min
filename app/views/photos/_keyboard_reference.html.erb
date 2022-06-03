@@ -1,0 +1,60 @@
+<div data-controller="photo-manager--keyboard-modal">
+  <button type="button"
+          class="btn btn-sm btn-outline-secondary mt-3"
+          data-bs-toggle="modal"
+          data-bs-target="#keyboardReference">
+    <i class="bi bi-command"></i>
+  </button>
+
+  <div class="modal fade"
+       id="keyboardReference"
+       tabindex="-1"
+       aria-labelledby="keyboardReferenceLabel"
+       aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="keyboardReferenceLabel">Keyboard Shortcuts</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table">
+            <tbody>
+            <thead>
+            <tr>
+              <th scope="col">Shortcut</th>
+              <th scope="col">Behaviour</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <th scope="row">/</th>
+              <td>Show this reference</td>
+            </tr>
+            <tr>
+              <th scope="row">N</th>
+              <td>Show the photo upload menu</td>
+            </tr>
+            <tr>
+              <th scope="row">S</th>
+              <td>Toggle selection mode</td>
+            </tr>
+            <tr>
+              <th scope="row"><i class="bi bi-command"></i> A</th>
+              <td>Select everything</td>
+            </tr>
+            <tr>
+              <th scope="row"><i class="bi bi-command"></i> D</th>
+              <td>Deselect everything</td>
+            </tr>
+            <tr>
+              <th scope="row"><i class="bi bi-shift"></i><i class="bi bi-mouse2"></i></th>
+              <td>After selecting an image, hold shift and select another to select the range between them</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

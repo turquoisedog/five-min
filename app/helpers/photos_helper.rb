@@ -9,7 +9,7 @@ module PhotosHelper
                        ])
     end
       link_to text,
-              organize_photos_path(filter_group: (group.is_a?(Group) ? group.id : 'ungrouped')),
+              manage_photos_path(filter_group: (group.is_a?(Group) ? group.id : 'ungrouped')),
               class: "nav-link#{' active' if is_current_filter?(group)}",
               aria_current: (true if is_current_filter?(group))
     end

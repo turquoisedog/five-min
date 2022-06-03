@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
   resources :groups
-  resources :photos do
+  resources :photos, except: [:new] do
     collection do
-      get 'organize'
+      get 'manage'
     end
   end
 

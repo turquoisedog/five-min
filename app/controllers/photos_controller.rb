@@ -7,26 +7,24 @@ class PhotosController < ApplicationController
     @groups = Group.all
   end
 
-  def organize
+  def manage
     @groups = Group.all
-    @photos = Photo.all
+    @photos = Photo.all.order(created_at: :desc)
+    @photo = Photo.new
 
     if params[:filter_group] == 'ungrouped'
       @filtered_group = Group.new(name: 'Ungrouped')
-      @photos = Photo.where.missing(:groups)
+      @photos = Photo.where.missing(:groups).order(created_at: :desc)
     elsif params[:filter_group] and params[:filter_group].match? /\A\d+\z/
       @filtered_group = Group.find(params[:filter_group])
-      @photos = @filtered_group.photos.uniq
+      @photos = @filtered_group.photos.order(created_at: :desc).uniq
     end
+
+    @photos = @photos
   end
 
   # GET /photos/1 or /photos/1.json
   def show
-  end
-
-  # GET /photos/new
-  def new
-    @photo = Photo.new
   end
 
   # GET /photos/1/edit
@@ -34,16 +32,22 @@ class PhotosController < ApplicationController
   end
 
   def create
+    @photos = []
+
     Photo.transaction do
       # compact_blank! because for some godawful reason
       # the form gets generated with a stray blank field.
       # why
       photo_params[:assets].compact_blank!.each do |asset|
-        Photo.create(asset: asset)
+        new_photo = Photo.new(asset: asset)
+        @photos << new_photo
+        new_photo.save
       end
     end
 
-    redirect_to photos_url
+    respond_to do |format|
+      format.turbo_stream
+    end
   end
 
   def update

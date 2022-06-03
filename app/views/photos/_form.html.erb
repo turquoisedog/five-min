@@ -1,21 +1,28 @@
-<%= form_with model: @photo do |form| %>
-  <% if photo.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(photo.errors.count, "error") %> prohibited this photo from being saved:</h2>
-
-      <ul>
-        <% photo.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+<div class="modal fade"
+     id="uploadModal"
+     tabindex="-1"
+     aria-labelledby="uploadModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadModalLabel">Upload Photos</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <%= form_with(model: @photo, data: {
+        controller: 'photo-manager--upload',
+        photo_manager__upload_target: 'uploadForm',
+        action: 'turbo:submit-end->photo-manager--upload#reset'
+      }) do |form| %>
+        <div class="modal-body">
+          <%= form.label :assets, 'Attach at least one image...', class: 'form-label' %>
+          <%= form.file_field :assets, multiple: true, direct_upload: true, class: 'form-control' %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <%= form.submit 'Upload', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
     </div>
-  <% end %>
-
-  <div>
-    <%= form.file_field :assets, multiple: true, direct_upload: true %>
   </div>
-
-  <div>
-    <%= form.submit %>
-  </div>
-<% end %>
+</div>

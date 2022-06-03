@@ -1,0 +1,57 @@
+<div data-controller="gallery">
+  <%# select_tag 'group-selector',
+                 options_from_collection_for_select(@groups, 'to_sgid', 'name'),
+                 class: 'form-select ms-2',
+                 placeholder: 'Select groups...',
+                 multiple: true,
+                 autocomplete: 'off',
+                 data: { gallery_target: 'groupSelector' } %>
+<!--  <button class="btn btn-secondary"-->
+<!--          data-action="gallery#updateGroups">-->
+<!--    Add to group(s)-->
+<!--  </button>-->
+
+  <div class="row">
+    <div class="col-lg-2 vh-100 mb-5">
+      <%= render 'uploader' %>
+      <%= render 'browser_pane' %>
+      <%= render 'keyboard_reference' %>
+    </div>
+
+    <div class="col">
+      <div class="hstack mb-3">
+        <nav aria-label="breadcrumb" class="ms-1">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item<%= ' active' unless @filtered_group %>">
+              <%= @filtered_group ? link_to('All Photos', manage_photos_path) : 'All Photos' %>
+            </li>
+            <% if @filtered_group %>
+              <li class="breadcrumb-item active"><%= @filtered_group.name %></li>
+            <% end %>
+          </ol>
+        </nav>
+
+        <div class="btn-group ms-auto" role="group" aria-label="Grouping actions">
+          <button class="btn btn-outline-primary"
+                  data-bs-toggle="button"
+                  data-action="gallery#toggleSelecting"
+                  data-gallery-target="toggler">
+            Select
+          </button>
+          <button class="btn btn-outline-secondary"
+                  data-bs-toggle="button"
+                  data-action="gallery#openGroupModal"
+                  data-gallery-target="groupButton"
+                  disabled>
+            Group...
+          </button>
+        </div>
+      </div>
+
+      <div id="photos" class="row g-2 gallery" data-gallery-target="gallery">
+        <%= render @photos %>
+      </div>
+    </div>
+
+  </div>
+</div>

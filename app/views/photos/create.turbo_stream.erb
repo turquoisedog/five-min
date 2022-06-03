@@ -1,0 +1,5 @@
+<% @photos.each do |photo| %>
+  <%= turbo_stream.prepend 'photos' do %>
+    <%= render photo %>
+  <% end %>
+<% end %>

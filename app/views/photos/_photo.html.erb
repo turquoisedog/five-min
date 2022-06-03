@@ -1,4 +1,5 @@
-<div id="<%= dom_id photo %>">
-  <%= image_tag photo.asset.variant :large %>
-
+<div class="col-6 col-sm-4 col-md-2">
+  <%= link_to photo, class: 'photo', data: { action: 'gallery#toggleSelect', sgid: photo.to_sgid_param } do %>
+    <%= image_tag photo.asset.variant(:thumb), class: 'rounded' %>
+  <% end %>
 </div>
